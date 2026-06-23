@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FlowCRM</title>
+<style>
+  :root{
+    --bg:#0f1220; --panel:#171b2e; --panel2:#1f2540; --line:#2a3155;
+    --txt:#e7e9f5; --mut:#9aa3c7; --accent:#6c7bff; --accent2:#22c55e;
+    --hot:#ef4444; --warn:#f59e0b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Tahoma,system-ui,sans-serif;background:var(--bg);color:var(--txt)}
+  button{font-family:inherit;cursor:pointer}
+  input,select{font-family:inherit}
+  .hidden{display:none!important}
+
+  /* Login */
+  #login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:28px;width:100%;max-width:420px}
+  .logo{font-size:26px;font-weight:800;margin:0 0 4px}
+  .logo span{color:var(--accent)}
+  .sub{color:var(--mut);margin:0 0 22px;font-size:14px}
+  label{display:block;font-size:13px;color:var(--mut);margin:12px 0 6px}
+  .in{width:100%;padding:11px 13px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;color:var(--txt);font-size:14px}
+  .btn{width:100%;margin-top:18px;padding:12px;background:var(--accent);border:none;border-radius:10px;color:#fff;font-weight:700;font-size:15px}
+  .btn:hover{filter:brightness(1.1)}
+  .btn.sec{background:var(--panel2);border:1px solid var(--line)}
+  .link{color:var(--accent);background:none;border:none;font-size:13px;margin-top:14px}
+  .err{color:var(--hot);font-size:13px;margin-top:12px;min-height:16px}
+
+  /* App */
+  header{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;background:var(--panel);border-bottom:1px solid var(--line)}
+  header .logo{font-size:20px}
+  .who{color:var(--mut);font-size:13px;display:flex;gap:12px;align-items:center}
+  nav{display:flex;gap:8px;padding:14px 22px;flex-wrap:wrap}
+  .tab{padding:9px 16px;background:var(--panel);border:1px solid var(--line);border-radius:10px;color:var(--mut);font-size:14px}
+  .tab.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  main{padding:6px 22px 40px;max-width:1100px;margin:0 auto}
+  .toolbar{display:flex;gap:10px;margin:10px 0 16px;flex-wrap:wrap}
+  .toolbar .in{width:auto;flex:1;min-width:180px}
+  table{width:100%;border-collapse:collapse;background:var(--panel);border-radius:12px;overflow:hidden}
+  th,td{text-align:right;padding:11px 14px;font-size:14px;border-bottom:1px solid var(--line)}
+  th{color:var(--mut);font-weight:600;background:var(--panel2)}
+  tr:last-child td{border-bottom:none}
+  .badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:700}
+  .b-hot{background:rgba(239,68,68,.18);color:#fca5a5}
+  .b-ok{background:rgba(34,197,94,.16);color:#86efac}
+  .b-mut{background:var(--panel2);color:var(--mut)}
+  .score{font-weight:800}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+  .stat .n{font-size:26px;font-weight:800}
+  .stat .l{color:var(--mut);font-size:13px;margin-top:4px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:16px}
+  .row .f{flex:1;min-width:140px}
+  .row .f .in{width:100%}
+  .mini{padding:9px 14px;border-radius:10px;border:none;background:var(--accent2);color:#04210f;font-weight:700;font-size:14px}
+  h3{margin:22px 0 10px;font-size:16px}
+  .empty{color:var(--mut);text-align:center;padding:30px;font-size:14px}
+</style>
+</head>
+<body>
+
+<!-- ===== Login ===== -->
+<div id="login">
+  <div class="card">
+    <h1 class="logo">Flow<span>CRM</span></h1>
+    <p class="sub" id="loginSub">سجّل دخولك للوحة التحكم</p>
+
+    <div id="regOnly" class="hidden">
+      <label>اسم المؤسسة</label>
+      <input class="in" id="orgName" placeholder="شركتي" />
+      <label>اسمك</label>
+      <input class="in" id="fullName" placeholder="أحمد علي" />
+    </div>
+
+    <label>الإيميل</label>
+    <input class="in" id="email" type="email" placeholder="you@company.com" value="ana@acme.io" />
+    <label>الباسورد</label>
+    <input class="in" id="password" type="password" placeholder="••••••••" value="password123" />
+
+    <label>عنوان الـ API</label>
+    <input class="in" id="apiBase" value="http://127.0.0.1:8000" />
+
+    <button class="btn" id="doAuth">دخول</button>
+    <div class="err" id="loginErr"></div>
+    <button class="link" id="toggleMode">معندكش حساب؟ سجّل مؤسسة جديدة</button>
+  </div>
+</div>
+
+<!-- ===== App ===== -->
+<div id="app" class="hidden">
+  <header>
+    <h1 class="logo">Flow<span>CRM</span></h1>
+    <div class="who"><span id="whoTxt"></span><button class="link" id="logout">خروج</button></div>
+  </header>
+  <nav>
+    <button class="tab on" data-tab="contacts">العملاء</button>
+    <button class="tab" data-tab="deals">الصفقات</button>
+    <button class="tab" data-tab="reports">التقارير</button>
+  </nav>
+  <main>
+    <!-- Contacts -->
+    <section id="tab-contacts">
+      <div class="row">
+        <div class="f"><label>اسم العميل</label><input class="in" id="cName" placeholder="اسم العميل"/></div>
+        <div class="f"><label>الإيميل</label><input class="in" id="cEmail" placeholder="email"/></div>
+        <div class="f"><label>الموبايل</label><input class="in" id="cPhone" placeholder="+20..."/></div>
+        <div class="f"><label>المصدر</label>
+          <select class="in" id="cSource">
+            <option value="manual">يدوي</option><option value="whatsapp">واتساب</option>
+            <option value="web_form">فورم</option><option value="instagram">انستجرام</option>
+            <option value="messenger">ماسنجر</option><option value="calendly">Calendly</option>
+          </select>
+        </div>
+        <button class="mini" id="addContact">+ إضافة عميل</button>
+      </div>
+      <div class="toolbar">
+        <input class="in" id="search" placeholder="ابحث بالاسم أو الإيميل..." />
+        <button class="tab" id="doSearch">بحث</button>
+      </div>
+      <table id="contactsTbl">
+        <thead><tr><th>الاسم</th><th>تواصل</th><th>المصدر</th><th>الحالة</th><th>Score</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Deals -->
+    <section id="tab-deals" class="hidden">
+      <div class="row">
+        <div class="f"><label>عنوان الصفقة</label><input class="in" id="dTitle" placeholder="صفقة..."/></div>
+        <div class="f"><label>contact_id</label><input class="in" id="dContact" placeholder="UUID العميل"/></div>
+        <div class="f"><label>القيمة</label><input class="in" id="dValue" type="number" value="0"/></div>
+        <div class="f"><label>المرحلة</label>
+          <select class="in" id="dStage">
+            <option value="new_lead">عميل جديد</option><option value="contacted">تم التواصل</option>
+            <option value="qualified">مؤهّل</option><option value="proposal_sent">عرض سعر</option>
+            <option value="negotiation">تفاوض</option><option value="won">تم البيع</option><option value="lost">خسارة</option>
+          </select>
+        </div>
+        <button class="mini" id="addDeal">+ إضافة صفقة</button>
+      </div>
+      <table id="dealsTbl">
+        <thead><tr><th>العنوان</th><th>المرحلة</th><th>القيمة</th><th>الاحتمالية</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Reports -->
+    <section id="tab-reports" class="hidden">
+      <h3>نظرة عامة على الـ Pipeline</h3>
+      <div class="grid" id="repStats"></div>
+      <h3>القمع (Funnel) حسب المرحلة</h3>
+      <table id="funnelTbl"><thead><tr><th>المرحلة</th><th>عدد الصفقات</th></tr></thead><tbody></tbody></table>
+    </section>
+  </main>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+// Default to the origin the page is served from (works in prod automatically);
+// fall back to local API when opened directly as a file.
+const DEFAULT_API = location.protocol.startsWith("http") ? location.origin : "http://127.0.0.1:8000";
+const state = { api: DEFAULT_API, token: null, mode: "login" };
+document.getElementById("apiBase").value = DEFAULT_API;
+
+// ---- API helper ----
+async function api(path, opts={}) {
+  const r = await fetch(state.api + path, {
+    method: opts.method || "GET",
+    headers: Object.assign(
+      { "Content-Type": "application/json" },
+      state.token ? { Authorization: "Bearer " + state.token } : {}
+    ),
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error((data.error && data.error.message) || ("HTTP " + r.status));
+  return data;
+}
+
+// ---- Auth ----
+$("#toggleMode").onclick = () => {
+  state.mode = state.mode === "login" ? "register" : "login";
+  const reg = state.mode === "register";
+  $("#regOnly").classList.toggle("hidden", !reg);
+  $("#doAuth").textContent = reg ? "إنشاء مؤسسة" : "دخول";
+  $("#loginSub").textContent = reg ? "اعمل مؤسسة جديدة + مدير" : "سجّل دخولك للوحة التحكم";
+  $("#toggleMode").textContent = reg ? "عندك حساب؟ سجّل دخول" : "معندكش حساب؟ سجّل مؤسسة جديدة";
+};
+
+$("#doAuth").onclick = async () => {
+  $("#loginErr").textContent = "";
+  state.api = $("#apiBase").value.replace(/\/$/, "");
+  try {
+    let res;
+    if (state.mode === "register") {
+      res = await api("/v1/auth/register", { method:"POST", body:{
+        org_name: $("#orgName").value, full_name: $("#fullName").value,
+        email: $("#email").value, password: $("#password").value }});
+    } else {
+      res = await api("/v1/auth/login", { method:"POST", body:{
+        email: $("#email").value, password: $("#password").value }});
+    }
+    state.token = res.access_token;
+    $("#whoTxt").textContent = res.user.full_name + " · " + res.user.role;
+    $("#login").classList.add("hidden");
+    $("#app").classList.remove("hidden");
+    loadContacts();
+  } catch (e) { $("#loginErr").textContent = e.message; }
+};
+
+$("#logout").onclick = () => { state.token = null; $("#app").classList.add("hidden"); $("#login").classList.remove("hidden"); };
+
+// ---- Tabs ----
+document.querySelectorAll(".tab[data-tab]").forEach(t => t.onclick = () => {
+  document.querySelectorAll(".tab[data-tab]").forEach(x => x.classList.remove("on"));
+  t.classList.add("on");
+  ["contacts","deals","reports"].forEach(n => $("#tab-"+n).classList.toggle("hidden", n !== t.dataset.tab));
+  if (t.dataset.tab === "contacts") loadContacts();
+  if (t.dataset.tab === "deals") loadDeals();
+  if (t.dataset.tab === "reports") loadReports();
+});
+
+// ---- Contacts ----
+async function loadContacts() {
+  const q = $("#search").value ? ("?search=" + encodeURIComponent($("#search").value)) : "";
+  const tb = $("#contactsTbl tbody"); tb.innerHTML = "";
+  try {
+    const page = await api("/v1/contacts" + q);
+    if (!page.items.length) { tb.innerHTML = '<tr><td colspan="5" class="empty">مفيش عملاء لسه</td></tr>'; return; }
+    for (const c of page.items) {
+      const hot = c.lead_score >= 70;
+      tb.insertAdjacentHTML("beforeend", `<tr>
+        <td>${esc(c.full_name)}</td>
+        <td>${esc(c.email||"")}<br><span style="color:var(--mut)">${esc(c.phone||"")}</span></td>
+        <td><span class="badge b-mut">${c.source}</span></td>
+        <td><span class="badge b-ok">${c.status}</span></td>
+        <td><span class="score" style="color:${hot?'var(--hot)':'var(--txt)'}">${c.lead_score}</span> ${hot?'<span class="badge b-hot">🔥</span>':''}</td>
+      </tr>`);
+    }
+  } catch(e){ tb.innerHTML = `<tr><td colspan="5" class="empty">${esc(e.message)}</td></tr>`; }
+}
+$("#doSearch").onclick = loadContacts;
+$("#search").addEventListener("keydown", e => { if(e.key==="Enter") loadContacts(); });
+$("#addContact").onclick = async () => {
+  try {
+    await api("/v1/contacts", { method:"POST", body:{
+      full_name: $("#cName").value, email: $("#cEmail").value||null,
+      phone: $("#cPhone").value||null, source: $("#cSource").value }});
+    $("#cName").value=$("#cEmail").value=$("#cPhone").value="";
+    loadContacts();
+  } catch(e){ alert(e.message); }
+};
+
+// ---- Deals ----
+async function loadDeals() {
+  const tb = $("#dealsTbl tbody"); tb.innerHTML = "";
+  try {
+    const page = await api("/v1/deals");
+    if (!page.items.length) { tb.innerHTML = '<tr><td colspan="4" class="empty">مفيش صفقات لسه</td></tr>'; return; }
+    for (const d of page.items)
+      tb.insertAdjacentHTML("beforeend", `<tr>
+        <td>${esc(d.title)}</td><td><span class="badge b-mut">${d.stage}</span></td>
+        <td>${d.value} ${d.currency}</td><td>${d.probability}%</td></tr>`);
+  } catch(e){ tb.innerHTML = `<tr><td colspan="4" class="empty">${esc(e.message)}</td></tr>`; }
+}
+$("#addDeal").onclick = async () => {
+  try {
+    await api("/v1/deals", { method:"POST", body:{
+      contact_id: $("#dContact").value, title: $("#dTitle").value,
+      value: Number($("#dValue").value)||0, stage: $("#dStage").value }});
+    loadDeals();
+  } catch(e){ alert(e.message); }
+};
+
+// ---- Reports ----
+async function loadReports() {
+  try {
+    const p = await api("/v1/reports/pipeline");
+    const f = await api("/v1/reports/funnel");
+    $("#repStats").innerHTML =
+      stat(f.total_contacts, "إجمالي العملاء") +
+      stat(num(p.open_value), "قيمة مفتوحة") +
+      stat(num(p.won_value), "قيمة مكسوبة");
+    const tb = $("#funnelTbl tbody"); tb.innerHTML = "";
+    for (const s of f.stages)
+      tb.insertAdjacentHTML("beforeend", `<tr><td>${s.stage}</td><td>${s.count}</td></tr>`);
+  } catch(e){ $("#repStats").innerHTML = `<div class="empty">${esc(e.message)}</div>`; }
+}
+const stat = (n,l) => `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div></div>`;
+const num = v => Number(v).toLocaleString();
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+</script>
+</body>
+</html>

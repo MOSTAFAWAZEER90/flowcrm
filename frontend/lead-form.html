@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>تواصل معنا — FlowCRM</title>
+<style>
+  :root{
+    --bg:#0f1220; --card:#171b2e; --field:#1f2540; --line:#2a3155;
+    --txt:#e7e9f5; --mut:#9aa3c7; --accent:#6c7bff; --ok:#22c55e; --err:#ef4444;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;font-family:"Segoe UI",Tahoma,system-ui,sans-serif;
+    background:radial-gradient(1200px 600px at 70% -10%,#243056 0%,var(--bg) 55%);
+    color:var(--txt);display:flex;align-items:center;justify-content:center;padding:24px}
+  .wrap{width:100%;max-width:860px;display:grid;grid-template-columns:1.1fr 1fr;gap:30px;align-items:center}
+  .hero h1{font-size:34px;line-height:1.3;margin:0 0 14px}
+  .hero h1 b{color:var(--accent)}
+  .hero p{color:var(--mut);font-size:16px;line-height:1.8;margin:0}
+  .brand{font-weight:800;font-size:20px;margin-bottom:18px}
+  .brand span{color:var(--accent)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px;
+    box-shadow:0 20px 60px rgba(0,0,0,.35)}
+  .card h2{margin:0 0 4px;font-size:20px}
+  .card .s{color:var(--mut);font-size:13px;margin:0 0 18px}
+  label{display:block;font-size:13px;color:var(--mut);margin:12px 0 6px}
+  .in{width:100%;padding:12px 13px;background:var(--field);border:1px solid var(--line);
+    border-radius:10px;color:var(--txt);font-size:14px;font-family:inherit}
+  textarea.in{resize:vertical;min-height:80px}
+  .btn{width:100%;margin-top:18px;padding:13px;background:var(--accent);border:none;border-radius:10px;
+    color:#fff;font-weight:700;font-size:15px;cursor:pointer}
+  .btn:hover{filter:brightness(1.1)} .btn:disabled{opacity:.6;cursor:default}
+  .msg{margin-top:14px;padding:12px 14px;border-radius:10px;font-size:14px;display:none}
+  .msg.ok{display:block;background:rgba(34,197,94,.14);color:#86efac;border:1px solid rgba(34,197,94,.3)}
+  .msg.err{display:block;background:rgba(239,68,68,.14);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
+  @media(max-width:760px){.wrap{grid-template-columns:1fr}.hero{text-align:center}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="brand">Flow<span>CRM</span></div>
+    <h1>عايز <b>عرض سعر</b> أو عندك استفسار؟</h1>
+    <p>سيب بياناتك وفريقنا هيتواصل معاك في أسرع وقت. بنرد بسرعة على العملاء الجاهزين! 🚀</p>
+  </div>
+
+  <form class="card" id="leadForm">
+    <h2>تواصل معنا</h2>
+    <p class="s">هنرد عليك خلال 24 ساعة.</p>
+
+    <label>الاسم *</label>
+    <input class="in" id="full_name" required placeholder="اسمك بالكامل" />
+
+    <label>الإيميل</label>
+    <input class="in" id="email" type="email" placeholder="you@email.com" />
+
+    <label>الموبايل</label>
+    <input class="in" id="phone" placeholder="+20..." />
+
+    <label>رسالتك</label>
+    <textarea class="in" id="message" placeholder="قولنا محتاج إيه..."></textarea>
+
+    <button class="btn" id="submitBtn" type="submit">ابعت 📩</button>
+    <div class="msg" id="msg"></div>
+  </form>
+</div>
+
+<script>
+  // ===== إعدادات =====
+  // Same origin when served by the API (incl. production); local fallback for file://
+  const API_BASE = location.protocol.startsWith("http") ? location.origin : "http://127.0.0.1:8000";
+  const ORG_SLUG = "acme-inc";
+  // ===================
+
+  const form = document.getElementById("leadForm");
+  const msg = document.getElementById("msg");
+  const btn = document.getElementById("submitBtn");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    msg.className = "msg"; msg.textContent = "";
+    btn.disabled = true; btn.textContent = "بنبعت...";
+
+    const payload = {
+      full_name: document.getElementById("full_name").value.trim(),
+      email: document.getElementById("email").value.trim() || null,
+      phone: document.getElementById("phone").value.trim() || null,
+      message: document.getElementById("message").value.trim() || null,
+    };
+
+    try {
+      const r = await fetch(`${API_BASE}/v1/public/leads/${ORG_SLUG}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await r.json();
+      if (!r.ok) throw new Error((data.error && data.error.message) || ("HTTP " + r.status));
+      msg.className = "msg ok";
+      msg.textContent = "تم الإرسال بنجاح ✅ شكرًا! هنتواصل معاك قريب.";
+      form.reset();
+    } catch (err) {
+      msg.className = "msg err";
+      msg.textContent = "حصل خطأ: " + err.message;
+    } finally {
+      btn.disabled = false; btn.textContent = "ابعت 📩";
+    }
+  });
+</script>
+</body>
+</html>

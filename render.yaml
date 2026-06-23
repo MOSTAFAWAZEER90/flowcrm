@@ -1,0 +1,29 @@
+# Render blueprint — deploys FlowCRM (API + bundled web UI) as one Docker service.
+# It connects to the SAME Supabase database (already migrated), so no DB setup
+# is needed on deploy. Set the `sync: false` secrets in the Render dashboard.
+services:
+  - type: web
+    name: flowcrm
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL          # your Supabase session-pooler URL (asyncpg)
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true        # Render generates a strong secret
+      - key: JWT_ALG
+        value: HS256
+      - key: DB_SSL
+        value: "true"
+      - key: DB_STATEMENT_CACHE_SIZE
+        value: "0"
+      - key: DB_APP_ROLE
+        value: authenticated
+      - key: ENVIRONMENT
+        value: production
+      - key: OPENAI_API_KEY        # leave blank to keep the local heuristic
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini

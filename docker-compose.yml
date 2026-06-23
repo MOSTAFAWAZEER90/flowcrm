@@ -1,0 +1,74 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: flowcrm
+      POSTGRES_PASSWORD: flowcrm
+      POSTGRES_DB: flowcrm
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U flowcrm -d flowcrm"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://flowcrm:flowcrm@postgres:5432/flowcrm
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me}
+      JWT_ALG: HS256
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+      DB_APP_ROLE: flowcrm_app
+      DB_STATEMENT_CACHE_SIZE: "0"
+      ENVIRONMENT: development
+    ports:
+      - "8000:8000"
+    # Apply migrations, then serve. (For prod, run migrations as a separate step.)
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000"
+
+  worker:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      api:
+        condition: service_started
+    environment:
+      DATABASE_URL: postgresql+asyncpg://flowcrm:flowcrm@postgres:5432/flowcrm
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-change-me}
+      JWT_ALG: HS256
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+      DB_APP_ROLE: flowcrm_app
+      DB_STATEMENT_CACHE_SIZE: "0"
+      ENVIRONMENT: development
+    command: arq app.workers.arq_worker.WorkerSettings
+
+volumes:
+  pgdata:
