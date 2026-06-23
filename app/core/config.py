@@ -52,6 +52,10 @@ class Settings(BaseSettings):
     calendly_signing_key: str | None = Field(default=None, alias="CALENDLY_SIGNING_KEY")
     forms_webhook_secret: str | None = Field(default=None, alias="FORMS_WEBHOOK_SECRET")
 
+    # WhatsApp Cloud API (Meta) webhook
+    whatsapp_verify_token: str | None = Field(default=None, alias="WHATSAPP_VERIFY_TOKEN")
+    whatsapp_org_slug: str = Field(default="acme-inc", alias="WHATSAPP_ORG_SLUG")
+
     @property
     def is_production(self) -> bool:
         return self.environment.lower() in {"production", "prod"}

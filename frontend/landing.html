@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FlowCRM — حوّل كل عميل محتمل لبيع</title>
+<style>
+  :root{
+    --bg:#0f1220; --card:#171b2e; --field:#1f2540; --line:#2a3155;
+    --txt:#e7e9f5; --mut:#9aa3c7; --accent:#6c7bff; --ok:#22c55e; --err:#ef4444;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Tahoma,system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.6}
+  a{color:var(--accent);text-decoration:none}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--line)}
+  .brand{font-weight:800;font-size:22px}.brand span{color:var(--accent)}
+  .nav a{margin-right:16px;color:var(--mut);font-size:14px}
+  .hero{text-align:center;padding:70px 22px 50px;background:radial-gradient(900px 400px at 50% -10%,#243056 0%,var(--bg) 60%)}
+  .hero h1{font-size:42px;margin:0 0 16px;line-height:1.25}
+  .hero h1 b{color:var(--accent)}
+  .hero p{font-size:18px;color:var(--mut);max-width:620px;margin:0 auto 28px}
+  .btn{display:inline-block;padding:14px 28px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-weight:700;font-size:16px;cursor:pointer}
+  .btn:hover{filter:brightness(1.1)}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--txt)}
+  .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;padding:30px 0}
+  .feat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+  .feat .ic{font-size:28px}.feat h3{margin:10px 0 6px;font-size:17px}.feat p{color:var(--mut);font-size:14px;margin:0}
+  section h2{text-align:center;font-size:28px;margin:50px 0 8px}
+  .sub{text-align:center;color:var(--mut);margin:0 0 24px}
+  .price{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;padding-bottom:20px}
+  .plan{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;text-align:center}
+  .plan.pop{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+  .plan h3{margin:0 0 6px}.plan .p{font-size:30px;font-weight:800;margin:8px 0}.plan .p small{font-size:14px;color:var(--mut);font-weight:400}
+  .plan ul{list-style:none;padding:0;margin:14px 0;text-align:right;color:var(--mut);font-size:14px}
+  .plan li{margin:8px 0}.plan li::before{content:"✓ ";color:var(--ok)}
+  #signup{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px;max-width:460px;margin:30px auto 70px}
+  #signup h2{margin:0 0 4px;font-size:22px}#signup .s{color:var(--mut);margin:0 0 18px;font-size:14px}
+  label{display:block;font-size:13px;color:var(--mut);margin:12px 0 6px}
+  .in{width:100%;padding:12px 13px;background:var(--field);border:1px solid var(--line);border-radius:10px;color:var(--txt);font-size:14px;font-family:inherit}
+  .msg{margin-top:14px;padding:12px;border-radius:10px;font-size:14px;display:none}
+  .msg.ok{display:block;background:rgba(34,197,94,.14);color:#86efac}
+  .msg.err{display:block;background:rgba(239,68,68,.14);color:#fca5a5}
+  footer{border-top:1px solid var(--line);padding:24px;text-align:center;color:var(--mut);font-size:13px}
+  @media(max-width:600px){.hero h1{font-size:30px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">Flow<span>CRM</span></div>
+  <div class="nav">
+    <a href="#features">المميزات</a>
+    <a href="#pricing">الأسعار</a>
+    <a href="/app/">دخول</a>
+  </div>
+</header>
+
+<div class="hero">
+  <h1>حوّل كل عميل محتمل <b>لبيع فعلي</b></h1>
+  <p>FlowCRM بيجمّعلك كل عملائك من الفورم وواتساب والسوشيال في مكان واحد، يقولك مين جاهز يشتري بالذكاء الاصطناعي، ويتابعهم تلقائي — عشان متضيّعش ولا صفقة.</p>
+  <a href="#signup" class="btn">ابدأ مجانًا 🚀</a>
+  <a href="/app/" class="btn ghost">شوف الديمو</a>
+</div>
+
+<div class="wrap">
+  <section id="features">
+    <div class="features">
+      <div class="feat"><div class="ic">📥</div><h3>كل العملاء في مكان واحد</h3><p>فورم، واتساب، انستجرام — أي قناة، عميل واحد منظّم.</p></div>
+      <div class="feat"><div class="ic">🤖</div><h3>تقييم ذكي للعملاء</h3><p>الـ AI يقولك مين العميل الساخن الجاهز يشتري، فتركّز صح.</p></div>
+      <div class="feat"><div class="ic">🔁</div><h3>متابعة تلقائية</h3><p>النظام يتابع العملاء لوحده لحد ما يردّوا — محدش بيضيع.</p></div>
+      <div class="feat"><div class="ic">📊</div><h3>تقارير ومبيعات</h3><p>تابع صفقاتك ومراحلها وأداء فريقك بالأرقام.</p></div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <h2>أسعار بسيطة</h2>
+    <p class="sub">ابدأ مجانًا، وكبّر وقت ما تحب.</p>
+    <div class="price">
+      <div class="plan"><h3>Starter</h3><div class="p">مجانًا</div><ul><li>حتى 100 عميل</li><li>فورم تجميع leads</li><li>تقييم AI أساسي</li></ul><a href="#signup" class="btn ghost">ابدأ</a></div>
+      <div class="plan pop"><h3>Pro</h3><div class="p">499 <small>ج/شهر</small></div><ul><li>عملاء غير محدود</li><li>واتساب + متابعة تلقائية</li><li>تقارير متقدمة</li></ul><a href="#signup" class="btn">اشترك</a></div>
+      <div class="plan"><h3>Business</h3><div class="p">حسب الطلب</div><ul><li>كل مميزات Pro</li><li>فريق كبير + صلاحيات</li><li>دعم مخصص</li></ul><a href="#signup" class="btn ghost">كلّمنا</a></div>
+    </div>
+  </section>
+
+  <form id="signup">
+    <h2>ابدأ مجانًا</h2>
+    <p class="s">اعمل حساب شركتك في ثانية — من غير كارت.</p>
+    <label>اسم شركتك</label><input class="in" id="org_name" required placeholder="شركتي" />
+    <label>اسمك</label><input class="in" id="full_name" required placeholder="أحمد علي" />
+    <label>الإيميل</label><input class="in" id="email" type="email" required placeholder="you@company.com" />
+    <label>كلمة السر</label><input class="in" id="password" type="password" required placeholder="8 أحرف على الأقل" />
+    <button class="btn" id="btn" type="submit" style="width:100%;margin-top:18px">إنشاء الحساب</button>
+    <div class="msg" id="msg"></div>
+  </form>
+</div>
+
+<footer>FlowCRM © 2026 — نظام إدارة علاقات العملاء بالذكاء الاصطناعي</footer>
+
+<script>
+  const API_BASE = location.protocol.startsWith("http") ? location.origin : "http://127.0.0.1:8000";
+  const form = document.getElementById("signup");
+  const msg = document.getElementById("msg");
+  const btn = document.getElementById("btn");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    msg.className = "msg"; msg.textContent = "";
+    btn.disabled = true; btn.textContent = "بنجهّز حسابك...";
+    try {
+      const r = await fetch(`${API_BASE}/v1/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          org_name: document.getElementById("org_name").value,
+          full_name: document.getElementById("full_name").value,
+          email: document.getElementById("email").value,
+          password: document.getElementById("password").value,
+        }),
+      });
+      const data = await r.json();
+      if (!r.ok) throw new Error((data.error && data.error.message) || ("HTTP " + r.status));
+      msg.className = "msg ok";
+      msg.innerHTML = "تم إنشاء حسابك ✅ <a href='/app/'>ادخل للوحة التحكم</a>";
+      form.reset();
+    } catch (err) {
+      msg.className = "msg err";
+      msg.textContent = "خطأ: " + err.message;
+    } finally {
+      btn.disabled = false; btn.textContent = "إنشاء الحساب";
+    }
+  });
+</script>
+</body>
+</html>

@@ -14,6 +14,7 @@ from app.routers import (
     reports,
     tasks,
     webhooks,
+    whatsapp,
 )
 
 api_router = APIRouter()
@@ -27,3 +28,4 @@ api_router.include_router(ai.router)
 api_router.include_router(reports.router)
 api_router.include_router(webhooks.router)
 api_router.include_router(public.router)
+api_router.include_router(whatsapp.router)
