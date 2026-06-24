@@ -20,6 +20,7 @@ from app.core.config import settings
 from app.core.deps import Principal, SystemSession
 from app.core.logging import get_logger
 from app.models.enums import LeadChannel, UserRole
+from app.models.webhook_event import WebhookEvent
 from app.repositories.organization_repo import OrganizationRepository
 from app.schemas.contact import ContactUpsert
 from app.services.contact_service import ContactService
@@ -61,6 +62,15 @@ def _parse_inbound(body: dict) -> tuple[str | None, str | None, str | None]:
 @router.post("/webhook")
 async def receive_webhook(request: Request, system: SystemSession) -> dict:
     body = await request.json()
+
+    # Persist the raw payload so we can see exactly what Meta delivered
+    # (durable: committed immediately, independent of later processing).
+    system.add(
+        WebhookEvent(source="whatsapp", external_id=uuid.uuid4().hex, raw=body, processed=False)
+    )
+    await system.commit()
+    log.info("whatsapp_webhook_received", keys=list(body.keys()))
+
     text_body, phone, name = _parse_inbound(body)
 
     # Ignore non-message callbacks (delivery receipts, read status, etc.)
