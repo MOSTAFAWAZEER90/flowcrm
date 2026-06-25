@@ -67,6 +67,11 @@ class Settings(BaseSettings):
     telegram_bot_token: str | None = Field(default=None, alias="TELEGRAM_BOT_TOKEN")
     owner_telegram_chat_id: str | None = Field(default=None, alias="OWNER_TELEGRAM_CHAT_ID")
 
+    # Facebook Page comments -> AI reply + private message (feature #6, ManyChat-style)
+    facebook_verify_token: str | None = Field(default=None, alias="FACEBOOK_VERIFY_TOKEN")
+    facebook_page_access_token: str | None = Field(default=None, alias="FACEBOOK_PAGE_ACCESS_TOKEN")
+    facebook_org_slug: str = Field(default="acme-inc", alias="FACEBOOK_ORG_SLUG")
+
     @property
     def is_production(self) -> bool:
         return self.environment.lower() in {"production", "prod"}

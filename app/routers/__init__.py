@@ -9,6 +9,7 @@ from app.routers import (
     contacts,
     conversations,
     deals,
+    facebook,
     followup,
     public,
     reminders,
@@ -31,3 +32,4 @@ api_router.include_router(webhooks.router)
 api_router.include_router(public.router)
 api_router.include_router(whatsapp.router)
 api_router.include_router(reminders.router)
+api_router.include_router(facebook.router)

@@ -44,6 +44,34 @@ async def send_whatsapp(to_phone: str | None, text: str) -> bool:
         return False
 
 
+async def _fb_post(path: str, body: dict) -> bool:
+    token = settings.facebook_page_access_token
+    if not token:
+        log.warning("facebook_send_skipped", reason="missing page access token")
+        return False
+    url = f"https://graph.facebook.com/{settings.whatsapp_api_version}/{path}"
+    try:
+        async with httpx.AsyncClient(timeout=20) as client:
+            r = await client.post(url, json=body, params={"access_token": token})
+            if r.status_code >= 300:
+                log.warning("facebook_send_failed", status=r.status_code, body=r.text[:300])
+                return False
+            return True
+    except Exception as exc:
+        log.warning("facebook_send_error", error=str(exc))
+        return False
+
+
+async def fb_reply_to_comment(comment_id: str, text: str) -> bool:
+    """Public reply under a Facebook comment."""
+    return await _fb_post(f"{comment_id}/comments", {"message": text})
+
+
+async def fb_private_reply(comment_id: str, text: str) -> bool:
+    """Open a private message (DM) to the person who commented."""
+    return await _fb_post(f"{comment_id}/private_replies", {"message": text})
+
+
 async def send_telegram(text: str) -> bool:
     """Send a message to the owner's Telegram chat."""
     if not (settings.telegram_bot_token and settings.owner_telegram_chat_id):
