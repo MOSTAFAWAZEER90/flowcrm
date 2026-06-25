@@ -40,6 +40,10 @@ class Settings(BaseSettings):
     openai_model: str = Field(default="gpt-4o-mini", alias="OPENAI_MODEL")
     openai_timeout: float = Field(default=30.0, alias="OPENAI_TIMEOUT")
 
+    # --- AI persona (replies sound like a real human sales rep, never a bot) ---
+    ai_agent_name: str = Field(default="Omar", alias="AI_AGENT_NAME")
+    ai_company_name: str = Field(default="our team", alias="AI_COMPANY_NAME")
+
     # --- JWT ---
     jwt_secret: str = Field(alias="JWT_SECRET")
     jwt_alg: str = Field(default="HS256", alias="JWT_ALG")
