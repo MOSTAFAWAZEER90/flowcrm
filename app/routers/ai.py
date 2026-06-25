@@ -11,7 +11,7 @@ from app.schemas.ai import (
     SummarizeRequest,
     SummarizeResponse,
 )
-from app.services import ai_service
+from app.services import ai_service, messaging
 from app.services.conversation_service import ConversationService
 from app.services.scoring import is_hot_lead
 
@@ -44,6 +44,21 @@ async def summarize(
         conversation_id=payload.conversation_id,
         summary=summary,
         message_count=len(messages),
+    )
+
+
+@router.post("/notify-owner", response_model=SummarizeResponse)
+async def notify_owner(
+    payload: SummarizeRequest, session: DBSession, principal: CurrentPrincipal
+) -> SummarizeResponse:
+    """Summarize a conversation and send the summary to the owner (feature #4)."""
+    service = ConversationService(session, principal)
+    messages = await service.list_messages(payload.conversation_id)
+    transcript = [(m.direction.value, m.body) for m in messages]
+    summary = await ai_service.summarize(transcript)
+    await messaging.send_telegram(f"📋 ملخص محادثة عميل:\n\n{summary}")
+    return SummarizeResponse(
+        conversation_id=payload.conversation_id, summary=summary, message_count=len(messages)
     )
 
 

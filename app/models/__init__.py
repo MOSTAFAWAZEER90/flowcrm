@@ -12,6 +12,7 @@ from app.models.deal_stage_history import DealStageHistory
 from app.models.followup_sequence import FollowupSequence
 from app.models.message import Message
 from app.models.organization import Organization
+from app.models.reminder import Reminder
 from app.models.task import Task
 from app.models.user import User
 from app.models.webhook_event import WebhookEvent
@@ -28,6 +29,7 @@ __all__ = [
     "FollowupSequence",
     "Message",
     "Organization",
+    "Reminder",
     "Task",
     "User",
     "WebhookEvent",

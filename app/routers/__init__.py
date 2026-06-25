@@ -11,6 +11,7 @@ from app.routers import (
     deals,
     followup,
     public,
+    reminders,
     reports,
     tasks,
     webhooks,
@@ -29,3 +30,4 @@ api_router.include_router(reports.router)
 api_router.include_router(webhooks.router)
 api_router.include_router(public.router)
 api_router.include_router(whatsapp.router)
+api_router.include_router(reminders.router)

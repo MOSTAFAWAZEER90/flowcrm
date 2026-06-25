@@ -56,9 +56,16 @@ class Settings(BaseSettings):
     calendly_signing_key: str | None = Field(default=None, alias="CALENDLY_SIGNING_KEY")
     forms_webhook_secret: str | None = Field(default=None, alias="FORMS_WEBHOOK_SECRET")
 
-    # WhatsApp Cloud API (Meta) webhook
+    # WhatsApp Cloud API (Meta) webhook + outbound sending
     whatsapp_verify_token: str | None = Field(default=None, alias="WHATSAPP_VERIFY_TOKEN")
     whatsapp_org_slug: str = Field(default="acme-inc", alias="WHATSAPP_ORG_SLUG")
+    whatsapp_access_token: str | None = Field(default=None, alias="WHATSAPP_ACCESS_TOKEN")
+    whatsapp_phone_number_id: str | None = Field(default=None, alias="WHATSAPP_PHONE_NUMBER_ID")
+    whatsapp_api_version: str = Field(default="v21.0", alias="WHATSAPP_API_VERSION")
+
+    # Where to send owner notifications/summaries (Telegram bot — easiest, no card)
+    telegram_bot_token: str | None = Field(default=None, alias="TELEGRAM_BOT_TOKEN")
+    owner_telegram_chat_id: str | None = Field(default=None, alias="OWNER_TELEGRAM_CHAT_ID")
 
     @property
     def is_production(self) -> bool:
